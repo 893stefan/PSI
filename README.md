@@ -36,10 +36,20 @@ Les arcs sont stockés dans la matrice d'adjacence.
 
 Le projet utilise **MSTest** pour vérifier le bon fonctionnement des classes.
 
+Prérequis :
+
+- SDK .NET 8.0
+
 Deux campagnes de tests sont prévues :
 
 - 20 tests unitaires pour la classe `Matrix`
 - 20 tests unitaires pour la classe `Graph`
+
+Pour lancer les tests :
+
+```bash
+dotnet test
+```
 
 ## Crédits
 
