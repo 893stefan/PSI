@@ -94,7 +94,7 @@ namespace TourneeFutee
             return voisins;
         }
 
-        /* Ajoute un arc allant du sommet nommé `sourceName` au sommet nommé `destinationName`, avec le poids `weight` (1 par défaut)
+        /* Ajoute un arc allant du sommet nommé "sourceName" au sommet nommé "destinationName", avec le poids "weight" (1 par défaut)
          * Si le graphe n'est pas orienté, ajoute aussi l'arc inverse, avec le même poids
          * Lève une ArgumentException dans les cas suivants :
          * - un des sommets n'a pas été trouvé dans le graphe (source et/ou destination)
@@ -140,7 +140,7 @@ namespace TourneeFutee
             }
         }
 
-        /* Renvoie le poids de l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName`
+        /* Renvoie le poids de l'arc allant du sommet nommé "sourceName" au sommet nommé "destinationName"
          * Si le graphe n'est pas orienté, GetEdgeWeight(A, B) = GetEdgeWeight(B, A)
          * Lève une ArgumentException dans les cas suivants :
          * - un des sommets n'a pas été trouvé dans le graphe (source et/ou destination)
@@ -159,7 +159,7 @@ namespace TourneeFutee
             return matriceAdjacence.GetValue(indiceSource, indiceDestination);
         }
 
-        /* Affecte le poids l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName` à `weight`
+        /* Affecte le poids l'arc allant du sommet nommé "sourceName" au sommet nommé "destinationName" à "weight"
          * Si le graphe n'est pas orienté, affecte le même poids à l'arc inverse
          * Lève une ArgumentException si un des sommets n'a pas été trouvé dans le graphe (source et/ou destination)
          */

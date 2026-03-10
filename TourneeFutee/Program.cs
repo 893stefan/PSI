@@ -2,9 +2,6 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
-        {
-            // TODO : faire vos propres tests ici
-        }
+        static void Main(string[] args){}
     }
 }

@@ -8,8 +8,8 @@ namespace TourneeFutee
         private readonly float valeurParDefaut;
         private readonly List<List<float>> matrice;
 
-        /* Crée une matrice de dimensions `nbRows` x `nbColums`.
-         * Toutes les cases de cette matrice sont remplies avec `defaultValue`.
+        /* Crée une matrice de dimensions "nbRows" x "nbColumns".
+         * Toutes les cases de cette matrice sont remplies avec "defaultValue".
          * Lève une ArgumentOutOfRangeException si une des dimensions est négative
          */
         public Matrix(int nbRows = 0, int nbColumns = 0, float defaultValue = 0)
@@ -65,10 +65,10 @@ namespace TourneeFutee
             }
         }
 
-        /* Insère une ligne à l'indice `i`. Décale les lignes suivantes vers le bas.
+        /* Insère une ligne à l'indice i. Décale les lignes suivantes vers le bas.
          * Toutes les cases de la nouvelle ligne contiennent DefaultValue.
-         * Si `i` = NbRows, insère une ligne en fin de matrice
-         * Lève une ArgumentOutOfRangeException si `i` est en dehors des indices valides
+         * Si i = NbRows, insère une ligne en fin de matrice
+         * Lève une ArgumentOutOfRangeException si i est en dehors des indices valides
          */
         public void AddRow(int i)
         {
@@ -86,10 +86,10 @@ namespace TourneeFutee
             matrice.Insert(i, ligne);
         }
 
-        /* Insère une colonne à l'indice `j`. Décale les colonnes suivantes vers la droite.
+        /* Insère une colonne à l'indice j. Décale les colonnes suivantes vers la droite.
          * Toutes les cases de la nouvelle ligne contiennent DefaultValue.
-         * Si `j` = NbColums, insère une colonne en fin de matrice
-         * Lève une ArgumentOutOfRangeException si `j` est en dehors des indices valides
+         * Si j = NbColumns, insère une colonne en fin de matrice
+         * Lève une ArgumentOutOfRangeException si j est en dehors des indices valides
          */
         public void AddColumn(int j)
         {
