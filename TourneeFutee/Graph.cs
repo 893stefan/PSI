@@ -1,86 +1,98 @@
-﻿namespace TourneeFutee
+using System;
+using System.Collections.Generic;
+
+namespace TourneeFutee
 {
     public class Graph
     {
+        private readonly bool oriente;
+        private readonly float valeurSansArc;
+        private readonly List<string> nomsSommets;
+        private readonly List<float> valeursSommets;
+        private readonly Matrix matriceAdjacence;
 
-        // TODO : ajouter tous les attributs que vous jugerez pertinents 
-
-
-        // --- Construction du graphe ---
-
-        // Contruit un graphe (`directed`=true => orienté)
-        // La valeur `noEdgeValue` est le poids modélisant l'absence d'un arc (0 par défaut)
+        // Construit un graphe orienté ou non
         public Graph(bool directed, float noEdgeValue = 0)
         {
-            // TODO : implémenter
+            oriente = directed;
+            valeurSansArc = noEdgeValue;
+            nomsSommets = new List<string>();
+            valeursSommets = new List<float>();
+            matriceAdjacence = new Matrix(defaultValue: noEdgeValue);
         }
 
-
-        // --- Propriétés ---
-
-        // Propriété : ordre du graphe
-        // Lecture seule
+        // Nombre de sommets
         public int Order
         {
-            get;    // TODO : implémenter
-                    // pas de set
+            get { return nomsSommets.Count; }
         }
 
-        // Propriété : graphe orienté ou non
-        // Lecture seule
+        // Graphe orienté ou non
         public bool Directed
         {
-            get;    // TODO : implémenter
-                    // pas de set
+            get { return oriente; }
         }
 
-
-        // --- Gestion des sommets ---
-
-        // Ajoute le sommet de nom `name` et de valeur `value` (0 par défaut) dans le graphe
-        // Lève une ArgumentException s'il existe déjà un sommet avec le même nom dans le graphe
+        // Ajoute un sommet
         public void AddVertex(string name, float value = 0)
         {
-            // TODO : implémenter
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (nomsSommets.Contains(name))
+            {
+                throw new ArgumentException("Un sommet avec ce nom existe déjà.", nameof(name));
+            }
+
+            nomsSommets.Add(name);
+            valeursSommets.Add(value);
+            matriceAdjacence.AddRow(matriceAdjacence.NbRows);
+            matriceAdjacence.AddColumn(matriceAdjacence.NbColumns);
         }
 
-
-        // Supprime le sommet de nom `name` du graphe (et tous les arcs associés)
-        // Lève une ArgumentException si le sommet n'a pas été trouvé dans le graphe
+        // Supprime un sommet
         public void RemoveVertex(string name)
         {
-            // TODO : implémenter
+            int indice = GetVertexIndex(name);
+
+            nomsSommets.RemoveAt(indice);
+            valeursSommets.RemoveAt(indice);
+            matriceAdjacence.RemoveRow(indice);
+            matriceAdjacence.RemoveColumn(indice);
         }
 
-        // Renvoie la valeur du sommet de nom `name`
-        // Lève une ArgumentException si le sommet n'a pas été trouvé dans le graphe
+        // Renvoie la valeur d'un sommet
         public float GetVertexValue(string name)
         {
-            // TODO : implémenter
-            return 0.0f;
+            int indice = GetVertexIndex(name);
+            return valeursSommets[indice];
         }
 
-        // Affecte la valeur du sommet de nom `name` à `value`
-        // Lève une ArgumentException si le sommet n'a pas été trouvé dans le graphe
+        // Modifie la valeur d'un sommet
         public void SetVertexValue(string name, float value)
         {
-            // TODO : implémenter
+            int indice = GetVertexIndex(name);
+            valeursSommets[indice] = value;
         }
 
-
-        // Renvoie la liste des noms des voisins du sommet de nom `vertexName`
-        // (si ce sommet n'a pas de voisins, la liste sera vide)
-        // Lève une ArgumentException si le sommet n'a pas été trouvé dans le graphe
+        // Renvoie les voisins d'un sommet
         public List<string> GetNeighbors(string vertexName)
         {
-            List<string> neighborNames = new List<string>();
+            int indiceSommet = GetVertexIndex(vertexName);
+            List<string> voisins = new List<string>();
 
-            // TODO : implémenter
+            for (int j = 0; j < Order; j++)
+            {
+                if (ArcExiste(indiceSommet, j))
+                {
+                    voisins.Add(nomsSommets[j]);
+                }
+            }
 
-            return neighborNames;
+            return voisins;
         }
-
-        // --- Gestion des arcs ---
 
         /* Ajoute un arc allant du sommet nommé `sourceName` au sommet nommé `destinationName`, avec le poids `weight` (1 par défaut)
          * Si le graphe n'est pas orienté, ajoute aussi l'arc inverse, avec le même poids
@@ -90,7 +102,19 @@
          */
         public void AddEdge(string sourceName, string destinationName, float weight = 1)
         {
-            // TODO : implémenter
+            int indiceSource = GetVertexIndex(sourceName);
+            int indiceDestination = GetVertexIndex(destinationName);
+
+            if (ArcExiste(indiceSource, indiceDestination))
+            {
+                throw new ArgumentException("Un arc avec ces sommets existe déjà.");
+            }
+
+            matriceAdjacence.SetValue(indiceSource, indiceDestination, weight);
+            if (!oriente)
+            {
+                matriceAdjacence.SetValue(indiceDestination, indiceSource, weight);
+            }
         }
 
         /* Supprime l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName` du graphe
@@ -101,33 +125,75 @@
          */
         public void RemoveEdge(string sourceName, string destinationName)
         {
-            // TODO : implémenter
+            int indiceSource = GetVertexIndex(sourceName);
+            int indiceDestination = GetVertexIndex(destinationName);
+
+            if (!ArcExiste(indiceSource, indiceDestination))
+            {
+                throw new ArgumentException("L'arc n'existe pas.");
+            }
+
+            matriceAdjacence.SetValue(indiceSource, indiceDestination, valeurSansArc);
+            if (!oriente)
+            {
+                matriceAdjacence.SetValue(indiceDestination, indiceSource, valeurSansArc);
+            }
         }
 
         /* Renvoie le poids de l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName`
-         * Si le graphe n'est pas orienté, GetEdgeWeight(A, B) = GetEdgeWeight(B, A) 
+         * Si le graphe n'est pas orienté, GetEdgeWeight(A, B) = GetEdgeWeight(B, A)
          * Lève une ArgumentException dans les cas suivants :
          * - un des sommets n'a pas été trouvé dans le graphe (source et/ou destination)
          * - l'arc n'existe pas
          */
         public float GetEdgeWeight(string sourceName, string destinationName)
         {
-            // TODO : implémenter
-            return 0.0f;
+            int indiceSource = GetVertexIndex(sourceName);
+            int indiceDestination = GetVertexIndex(destinationName);
+
+            if (!ArcExiste(indiceSource, indiceDestination))
+            {
+                throw new ArgumentException("L'arc n'existe pas.");
+            }
+
+            return matriceAdjacence.GetValue(indiceSource, indiceDestination);
         }
 
-        /* Affecte le poids l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName` à `weight` 
+        /* Affecte le poids l'arc allant du sommet nommé `sourceName` au sommet nommé `destinationName` à `weight`
          * Si le graphe n'est pas orienté, affecte le même poids à l'arc inverse
          * Lève une ArgumentException si un des sommets n'a pas été trouvé dans le graphe (source et/ou destination)
          */
         public void SetEdgeWeight(string sourceName, string destinationName, float weight)
         {
-            // TODO : implémenter
+            int indiceSource = GetVertexIndex(sourceName);
+            int indiceDestination = GetVertexIndex(destinationName);
+
+            matriceAdjacence.SetValue(indiceSource, indiceDestination, weight);
+            if (!oriente)
+            {
+                matriceAdjacence.SetValue(indiceDestination, indiceSource, weight);
+            }
         }
 
-        // TODO : ajouter toutes les méthodes que vous jugerez pertinentes 
+        private int GetVertexIndex(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
+            int indice = nomsSommets.IndexOf(name);
+            if (indice < 0)
+            {
+                throw new ArgumentException("Sommet introuvable.", nameof(name));
+            }
+
+            return indice;
+        }
+
+        private bool ArcExiste(int indiceSource, int indiceDestination)
+        {
+            return matriceAdjacence.GetValue(indiceSource, indiceDestination) != valeurSansArc;
+        }
     }
-
-
 }

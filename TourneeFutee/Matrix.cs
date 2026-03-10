@@ -1,9 +1,12 @@
-﻿namespace TourneeFutee
+using System;
+using System.Collections.Generic;
+
+namespace TourneeFutee
 {
     public class Matrix
     {
-        // TODO : ajouter tous les attributs que vous jugerez pertinents 
-
+        private readonly float valeurParDefaut;
+        private readonly List<List<float>> matrice;
 
         /* Crée une matrice de dimensions `nbRows` x `nbColums`.
          * Toutes les cases de cette matrice sont remplies avec `defaultValue`.
@@ -11,31 +14,55 @@
          */
         public Matrix(int nbRows = 0, int nbColumns = 0, float defaultValue = 0)
         {
-            // TODO : implémenter
+            if (nbRows < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbRows));
+            }
+
+            if (nbColumns < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nbColumns));
+            }
+
+            valeurParDefaut = defaultValue;
+            matrice = new List<List<float>>();
+
+            for (int i = 0; i < nbRows; i++)
+            {
+                List<float> ligne = new List<float>();
+                for (int j = 0; j < nbColumns; j++)
+                {
+                    ligne.Add(defaultValue);
+                }
+
+                matrice.Add(ligne);
+            }
         }
 
-        // Propriété : valeur par défaut utilisée pour remplir les nouvelles cases
-        // Lecture seule
+        // Valeur par défaut des nouvelles cases
         public float DefaultValue
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get { return valeurParDefaut; }
         }
 
-        // Propriété : nombre de lignes
-        // Lecture seule
+        // Nombre de lignes
         public int NbRows
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get { return matrice.Count; }
         }
 
-        // Propriété : nombre de colonnes
-        // Lecture seule
+        // Nombre de colonnes
         public int NbColumns
         {
-            get; // TODO : implémenter
-                 // pas de set
+            get
+            {
+                if (NbRows == 0)
+                {
+                    return 0;
+                }
+
+                return matrice[0].Count;
+            }
         }
 
         /* Insère une ligne à l'indice `i`. Décale les lignes suivantes vers le bas.
@@ -45,7 +72,18 @@
          */
         public void AddRow(int i)
         {
-            // TODO : implémenter
+            if (i < 0 || i > NbRows)
+            {
+                throw new ArgumentOutOfRangeException(nameof(i));
+            }
+
+            List<float> ligne = new List<float>();
+            for (int j = 0; j < NbColumns; j++)
+            {
+                ligne.Add(DefaultValue);
+            }
+
+            matrice.Insert(i, ligne);
         }
 
         /* Insère une colonne à l'indice `j`. Décale les colonnes suivantes vers la droite.
@@ -55,48 +93,79 @@
          */
         public void AddColumn(int j)
         {
-            // TODO : implémenter
+            if (j < 0 || j > NbColumns)
+            {
+                throw new ArgumentOutOfRangeException(nameof(j));
+            }
+
+            for (int i = 0; i < NbRows; i++)
+            {
+                matrice[i].Insert(j, DefaultValue);
+            }
         }
 
-        // Supprime la ligne à l'indice `i`. Décale les lignes suivantes vers le haut.
-        // Lève une ArgumentOutOfRangeException si `i` est en dehors des indices valides
+        // Supprime une ligne
         public void RemoveRow(int i)
         {
-            // TODO : implémenter
+            VerifierIndiceLigne(i);
+            matrice.RemoveAt(i);
         }
 
-        // Supprime la colonne à l'indice `j`. Décale les colonnes suivantes vers la gauche.
-        // Lève une ArgumentOutOfRangeException si `j` est en dehors des indices valides
+        // Supprime une colonne
         public void RemoveColumn(int j)
         {
-            // TODO : implémenter
+            VerifierIndiceColonne(j);
+
+            for (int i = 0; i < NbRows; i++)
+            {
+                matrice[i].RemoveAt(j);
+            }
         }
 
-        // Renvoie la valeur à la ligne `i` et colonne `j`
-        // Lève une ArgumentOutOfRangeException si `i` ou `j` est en dehors des indices valides
+        // Renvoie la valeur d'une case
         public float GetValue(int i, int j)
         {
-            // TODO : implémenter
-            return 0.0f;
+            VerifierIndiceLigne(i);
+            VerifierIndiceColonne(j);
+            return matrice[i][j];
         }
 
-        // Affecte la valeur à la ligne `i` et colonne `j` à `v`
-        // Lève une ArgumentOutOfRangeException si `i` ou `j` est en dehors des indices valides
+        // Change la valeur d'une case
         public void SetValue(int i, int j, float v)
         {
-            // TODO : implémenter
+            VerifierIndiceLigne(i);
+            VerifierIndiceColonne(j);
+            matrice[i][j] = v;
         }
 
-        // Affiche la matrice
+        // Affiche la matrice dans la console
         public void Print()
         {
-            // TODO : implémenter
+            for (int i = 0; i < NbRows; i++)
+            {
+                for (int j = 0; j < NbColumns; j++)
+                {
+                    Console.Write(GetValue(i, j) + " ");
+                }
+
+                Console.WriteLine();
+            }
         }
 
+        private void VerifierIndiceLigne(int i)
+        {
+            if (i < 0 || i >= NbRows)
+            {
+                throw new ArgumentOutOfRangeException(nameof(i));
+            }
+        }
 
-        // TODO : ajouter toutes les méthodes que vous jugerez pertinentes 
-
+        private void VerifierIndiceColonne(int j)
+        {
+            if (j < 0 || j >= NbColumns)
+            {
+                throw new ArgumentOutOfRangeException(nameof(j));
+            }
+        }
     }
-
-
 }
