@@ -1,16 +1,24 @@
+using System;
+using System.Collections.Generic;
+
 namespace TourneeFutee
 {
+    // Résout le problème de voyageur de commerce défini par le graphe `graph`
+    // en utilisant l'algorithme de Little
     public class Little
     {
         private readonly Graph graph;
         private readonly int nbCities;
 
+        // Instancie le planificateur en spécifiant le graphe modélisant un problème de voyageur de commerce
         public Little(Graph graph)
         {
             this.graph = graph;
             this.nbCities = graph.Order;
         }
 
+        // Trouve la tournée optimale dans le graphe `this.graph`
+        // (c'est à dire le cycle hamiltonien de plus faible coût)
         public Tour ComputeOptimalTour()
         {
             List<string> vertices = graph.VertexNames;
@@ -20,6 +28,8 @@ namespace TourneeFutee
                 reduction, new List<(string, string)>());
         }
 
+        // Explore récursivement les branches d'inclusion et d'exclusion de l'arc de regret maximal
+        // Renvoie la tournée de coût minimal trouvée
         private Tour BranchAndBound(Matrix matrix, List<string> rowLabels, List<string> colLabels,
             float lowerBound, List<(string, string)> includedSegments)
         {
@@ -31,24 +41,24 @@ namespace TourneeFutee
                 float lastCost = matrix.GetValue(0, 0);
                 if (lastCost == float.PositiveInfinity)
                     return new Tour(new List<(string, string)>(), float.PositiveInfinity);
-                var finalSegments = new List<(string, string)>(includedSegments) { (rowLabels[0], colLabels[0]) };
+                List<(string, string)> finalSegments = new List<(string, string)>(includedSegments) { (rowLabels[0], colLabels[0]) };
                 return new Tour(finalSegments, lowerBound + lastCost);
             }
 
-            var (i, j, _) = GetMaxRegret(matrix);
+            (int i, int j, float _) = GetMaxRegret(matrix);
             string ri = rowLabels[i];
             string cj = colLabels[j];
 
             // Branche droite : inclure l'arc (ri → cj)
-            var rightIncluded = new List<(string, string)>(includedSegments) { (ri, cj) };
+            List<(string, string)> rightIncluded = new List<(string, string)>(includedSegments) { (ri, cj) };
 
             Matrix rightMatrix = CopyMatrix(matrix);
             rightMatrix.RemoveRow(i);
             rightMatrix.RemoveColumn(j);
 
-            var rightRows = new List<string>(rowLabels);
+            List<string> rightRows = new List<string>(rowLabels);
             rightRows.RemoveAt(i);
-            var rightCols = new List<string>(colLabels);
+            List<string> rightCols = new List<string>(colLabels);
             rightCols.RemoveAt(j);
 
             for (int r = 0; r < rightMatrix.NbRows; r++)
@@ -72,6 +82,8 @@ namespace TourneeFutee
             return rightTour.Cost <= leftTour.Cost ? rightTour : leftTour;
         }
 
+        // Réduit la matrice `m` et renvoie la valeur totale de la réduction
+        // Après appel à cette méthode, la matrice `m` est *modifiée*.
         public static float ReduceMatrix(Matrix m)
         {
             float total = 0;
@@ -109,6 +121,8 @@ namespace TourneeFutee
             return total;
         }
 
+        // Renvoie le regret de valeur maximale dans la matrice de coûts `m` sous la forme d'un tuple `(int i, int j, float value)`
+        // où `i`, `j`, et `value` contiennent respectivement la ligne, la colonne et la valeur du regret maximal
         public static (int i, int j, float value) GetMaxRegret(Matrix m)
         {
             int bestI = 0, bestJ = 0;
@@ -143,6 +157,9 @@ namespace TourneeFutee
             return (bestI, bestJ, bestRegret);
         }
 
+        /* Renvoie vrai si le segment `segment` est un trajet parasite, c'est-à-dire s'il ferme prématurément la tournée incluant les trajets contenus dans `includedSegments`
+         * Une tournée est incomplète si elle visite un nombre de villes inférieur à `nbCities`
+         */
         public static bool IsForbiddenSegment((string source, string destination) segment,
             List<(string source, string destination)> includedSegments, int nbCities)
         {
@@ -160,6 +177,8 @@ namespace TourneeFutee
             }
         }
 
+        // Construit la matrice de coûts à partir du graphe `graph`
+        // La diagonale est mise à +infini (pas de trajet d'une ville vers elle-même)
         private Matrix BuildCostMatrix(List<string> vertices)
         {
             int n = vertices.Count;
@@ -182,6 +201,7 @@ namespace TourneeFutee
             return m;
         }
 
+        // Renvoie une copie indépendante de la matrice `m`
         private static Matrix CopyMatrix(Matrix m)
         {
             Matrix copy = new Matrix(m.NbRows, m.NbColumns);

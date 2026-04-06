@@ -1,36 +1,31 @@
-# Objectif 1 — Graphe en C#
+# Objectif 2 — Algorithme de Little en C#
 
 Projet réalisé dans le cadre du module **Problème Scientifique & Informatique (PSI)** (MESIIN240125) à l'ESILV.
 
-L'objectif de ce projet est d'implémenter une structure de graphe en C# en utilisant une matrice d'adjacence.
+L'objectif de ce projet est d'implémenter l'algorithme de Little pour résoudre le problème du voyageur de commerce (TSP) en C#.
 
 ## Objectifs du projet
 
-- Implémenter un graphe **orienté ou non orienté**
-- Représenter les arcs avec une **matrice d'adjacence**
-- Manipuler les **sommets et arcs du graphe**
-- Appliquer les principes de **programmation orientée objet**
+- Modéliser une **tournée** (cycle hamiltonien) dans un graphe
+- Implémenter l'**algorithme de Little** (branch & bound) pour trouver la tournée optimale
+- Traiter les cas **symétriques** (graphe non orienté) et **asymétriques** (graphe orienté)
 - Valider l'implémentation avec des **tests unitaires**
 
 ## Fonctionnalités
 
-Le graphe permet notamment :
+L'algorithme de Little permet de :
 
-- l'ajout de sommets
-- l'ajout d'arcs pondérés
-- l'accès à la valeur d'un sommet
-- la gestion des graphes orientés ou non orientés
+- **Réduire** une matrice de coûts (réduction par lignes et colonnes)
+- Calculer le **regret maximal** pour choisir l'arc à brancher
+- Détecter les **trajets parasites** (sous-tournées prématurées)
+- Trouver le **cycle hamiltonien de plus faible coût** par exploration branch & bound
 
 ## Structure du projet
 
-Le projet repose sur les deux classes suivantes :
+Le projet s'appuie sur les classes de l'Objectif 1 (`Graph`, `Matrix`) et ajoute :
 
-- **Graph** : gestion des sommets et des arcs
-- **Matrix** : gestion de la matrice d'adjacence
-
-Les sommets sont identifiés par un nom et une valeur.
-
-Les arcs sont stockés dans la matrice d'adjacence.
+- **Tour** : modélise une tournée (liste de trajets et coût total)
+- **Little** : résout le TSP par l'algorithme de Little
 
 ## Tests
 
@@ -40,10 +35,10 @@ Prérequis :
 
 - SDK .NET 8.0
 
-Deux campagnes de tests sont prévues :
+Deux parties de tests sont prévues :
 
-- 20 tests unitaires pour la classe `Matrix`
-- 20 tests unitaires pour la classe `Graph`
+- **Partie 1** — test des étapes de l'algorithme : réduction de matrice, calcul du regret maximal, détection des trajets parasites
+- **Partie 2** — test de l'algorithme complet sur un problème symétrique (6 villes françaises, coût optimal = 2437 km) et un problème asymétrique (6 villes A–F, coût optimal = 20)
 
 Pour lancer les tests :
 
