@@ -1,0 +1,121 @@
+@startuml TourneeFutee
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package TourneeFutee {
+
+    class Matrix {
+        - valeurParDefaut : float
+        - matrice : List<List<float>>
+        ..
+        + Matrix(nbRows : int, nbColumns : int, defaultValue : float)
+        ..
+        + DefaultValue : float
+        + NbRows : int
+        + NbColumns : int
+        ..
+        + AddRow(i : int)
+        + AddColumn(j : int)
+        + RemoveRow(i : int)
+        + RemoveColumn(j : int)
+        + GetValue(i : int, j : int) : float
+        + SetValue(i : int, j : int, v : float)
+        + Print()
+        - VerifierIndiceLigne(i : int)
+        - VerifierIndiceColonne(j : int)
+    }
+
+    class Graph {
+        - oriente : bool
+        - valeurSansArc : float
+        - nomsSommets : List<string>
+        - valeursSommets : List<float>
+        - matriceAdjacence : Matrix
+        ..
+        + Graph(directed : bool, noEdgeValue : float)
+        ..
+        + Order : int
+        + Directed : bool
+        + VertexNames : List<string>
+        ..
+        + ContainsVertex(name : string) : bool
+        + AddVertex(name : string, value : float)
+        + RemoveVertex(name : string)
+        + GetVertexValue(name : string) : float
+        + SetVertexValue(name : string, value : float)
+        + GetNeighbors(vertexName : string) : List<string>
+        + AddEdge(source : string, dest : string, weight : float)
+        + RemoveEdge(source : string, dest : string)
+        + GetEdgeWeight(source : string, dest : string) : float
+        + SetEdgeWeight(source : string, dest : string, weight : float)
+        - GetVertexIndex(name : string) : int
+        - ArcExiste(i : int, j : int) : bool
+    }
+
+    class Tour {
+        - segments : List<(string, string)>
+        - sommets : List<string>
+        - cout : float
+        ..
+        + Tour(segments : List<(string, string)>, cout : float)
+        + Tour(sommets : List<string>, cout : float)
+        + Tour()
+        ..
+        + Cost : float
+        + Vertices : IList<string>
+        + NbSegments : int
+        ..
+        + ContainsSegment(segment : (string, string)) : bool
+        + Print()
+        - ReconstruireSommets(...) : List<string>
+        - ReconstruireSegments(...) : List<(string, string)>
+    }
+
+    class Little {
+        - graph : Graph
+        - nbCities : int
+        ..
+        + Little(graph : Graph)
+        ..
+        + ComputeOptimalTour() : Tour
+        + {static} ReduceMatrix(m : Matrix) : float
+        + {static} GetMaxRegret(m : Matrix) : (int, int, float)
+        + {static} IsForbiddenSegment(segment, included, nbCities) : bool
+        - BranchAndBound(matrix, rowLabels, colLabels, ...) : Tour
+        - BuildCostMatrix(vertices : List<string>) : Matrix
+        - {static} CopyMatrix(m : Matrix) : Matrix
+    }
+
+    class ServicePersistance {
+        - chaineConnexion : string
+        ..
+        + ServicePersistance(serverIp : string, dbname : string, user : string, pwd : string)
+        ..
+        + SaveGraph(g : Graph) : uint
+        + LoadGraph(id : uint) : Graph
+        + SaveTour(graphId : uint, t : Tour) : uint
+        + LoadTour(id : uint) : Tour
+        - OuvrirConnexion() : MySqlConnection
+    }
+
+    ' Composition : Graph contient une Matrix
+    Graph *--> Matrix : matriceAdjacence
+
+    ' Little dépend de Graph et produit des Tour
+    Little --> Graph : utilise
+    Little ..> Tour : crée
+    Little ..> Matrix : utilise
+
+    ' ServicePersistance manipule Graph et Tour
+    ServicePersistance ..> Graph : sauvegarde / charge
+    ServicePersistance ..> Tour : sauvegarde / charge
+
+}
+
+@enduml

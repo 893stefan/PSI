@@ -39,6 +39,12 @@ namespace TourneeFutee
             get { return new List<string>(nomsSommets); }
         }
 
+        // Renvoie vrai si le graphe contient un sommet portant ce nom
+        public bool ContainsVertex(string name)
+        {
+            return nomsSommets.Contains(name);
+        }
+
         // Ajoute un sommet
         public void AddVertex(string name, float value = 0)
         {
