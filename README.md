@@ -15,6 +15,10 @@ L'objectif de ce projet est d'implémenter une couche de persistance MySQL pour 
 - **SaveGraph** / **LoadGraph** : sérialise un graphe (orienté ou non) en base de données et le reconstruit à l'identique
 - **SaveTour** / **LoadTour** : sérialise une tournée (séquence de sommets et coût total) et la reconstruit à l'identique
 
+## Diagramme UML
+
+![Diagramme UML](TourneeFutee.png)
+
 ## Structure du projet
 
 Le projet s'appuie sur les classes des objectifs précédents (`Graph`, `Matrix`, `Tour`, `Little`) et ajoute :
