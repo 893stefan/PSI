@@ -19,6 +19,10 @@ L'objectif de ce projet est d'implémenter une couche de persistance MySQL pour 
 
 ![Diagramme UML](TourneeFutee.png)
 
+## Diagramme Entité/Association
+
+![Diagramme E/A](DiagrammeEA.png)
+
 ## Structure du projet
 
 Le projet s'appuie sur les classes des objectifs précédents (`Graph`, `Matrix`, `Tour`, `Little`) et ajoute :
@@ -41,12 +45,10 @@ Pour un graphe **non orienté**, un seul arc est stocké par paire (source d'ind
 ## Configuration requise
 
 1. Serveur MySQL démarré et accessible (par défaut `127.0.0.1`)
-2. Créer la base de test et exécuter le script :
+2. Exécuter le script d'initialisation (crée la base et les tables) :
 
-```sql
-CREATE DATABASE tourneefutee_test;
-USE tourneefutee_test;
-SOURCE init_db.sql;
+```bash
+mysql -u root -proot < init_db.sql
 ```
 
 3. SDK .NET 8.0

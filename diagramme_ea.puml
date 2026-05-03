@@ -1,0 +1,59 @@
+@startuml DiagrammeEA
+
+skinparam linetype ortho
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+skinparam roundcorner 5
+
+hide methods
+hide circle
+
+entity Graphe {
+    * id : INT UNSIGNED <<PK>>
+    --
+    est_oriente : TINYINT(1)
+}
+
+entity Sommet {
+    * id : INT UNSIGNED <<PK>>
+    --
+    * graphe_id : INT UNSIGNED <<FK>>
+    nom : VARCHAR(50)
+    valeur : FLOAT
+}
+
+entity Arc {
+    * id : INT UNSIGNED <<PK>>
+    --
+    * graphe_id : INT UNSIGNED <<FK>>
+    * sommet_source : INT UNSIGNED <<FK>>
+    * sommet_dest : INT UNSIGNED <<FK>>
+    poids : FLOAT
+}
+
+entity Tournee {
+    * id : INT UNSIGNED <<PK>>
+    --
+    * graphe_id : INT UNSIGNED <<FK>>
+    cout_total : FLOAT
+}
+
+entity EtapeTournee {
+    * tournee_id : INT UNSIGNED <<FK, PK>>
+    * numero_ordre : INT UNSIGNED <<PK>>
+    --
+    * sommet_id : INT UNSIGNED <<FK>>
+}
+
+Graphe ||--o{ Sommet : "contient (1,n)"
+Graphe ||--o{ Arc : "possède (1,n)"
+Graphe ||--o{ Tournee : "associé à (1,n)"
+Sommet ||--o{ Arc : "source (1,n)"
+Sommet ||--o{ Arc : "destination (1,n)"
+Tournee ||--o{ EtapeTournee : "composée de (1,n)"
+Sommet ||--o{ EtapeTournee : "référencé par (1,n)"
+
+@enduml
